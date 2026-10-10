@@ -8,9 +8,11 @@ import { formatMoney } from "@/lib/money";
 import { Badge, cx, ErrorText, Skeleton } from "./ui";
 import { MembersBar } from "./members-bar";
 import { ExpensesTab } from "./expenses-tab";
+import { SettlementPanel } from "./settlement-panel";
 
 const TABS = [
   { id: "expenses", label: "Despesas" },
+  { id: "settle", label: "Saldos e quitação" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -56,6 +58,14 @@ export function GroupView({ groupId }: { groupId: number }) {
               {balances && <> · Total gasto {formatMoney(balances.totalSpent, group.currency)}</>}
             </p>
           </div>
+          {balances && !balances.isSettled && (
+            <button
+              onClick={() => setTab("settle")}
+              className="text-sm font-medium text-emerald-700 hover:underline dark:text-emerald-400"
+            >
+              {balances.plan.length} {balances.plan.length === 1 ? "transferência pendente" : "transferências pendentes"} →
+            </button>
+          )}
         </div>
         <MembersBar group={group} />
       </div>
@@ -80,6 +90,7 @@ export function GroupView({ groupId }: { groupId: number }) {
       </nav>
 
       {tab === "expenses" && <ExpensesTab group={group} />}
+      {tab === "settle" && <SettlementPanel group={group} />}
     </div>
   );
 }
