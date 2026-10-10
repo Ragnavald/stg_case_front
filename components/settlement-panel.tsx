@@ -7,7 +7,7 @@ import { formatTimestamp, useRefreshGroup } from "@/lib/hooks";
 import { abs, formatMoney, isNegative, isZero } from "@/lib/money";
 import { Avatar, Button, Card, CardTitle, cx, EmptyState, ErrorText, Money, Skeleton } from "./ui";
 
-export function SettlementPanel({ group }: { group: Group }) {
+export function SettlementPanel({ group, onOpenStatement }: { group: Group; onOpenStatement: (userId: number) => void }) {
   const { data, error } = useSWR<Balances>(`/groups/${group.id}/balances`, fetcher);
   const { data: settlements } = useSWR<Settlement[]>(`/groups/${group.id}/settlements`, fetcher);
 
@@ -18,7 +18,7 @@ export function SettlementPanel({ group }: { group: Group }) {
     <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
       <div className="flex flex-col gap-6">
         <Stats data={data} />
-        <BalancesCard group={group} data={data} />
+        <BalancesCard group={group} data={data} onOpenStatement={onOpenStatement} />
       </div>
       <div className="flex flex-col gap-6">
         <PlanCard group={group} data={data} />
@@ -63,7 +63,7 @@ function Tile({ label, value, sub, highlight, className }: { label: string; valu
  * Diverging bar per person, centered on zero: blue to the right = receives,
  * red to the left = owes. Hover a row for the breakdown; "Tabela" shows the same data as a table.
  */
-function BalancesCard({ group, data }: { group: Group; data: Balances }) {
+function BalancesCard({ group, data, onOpenStatement }: { group: Group; data: Balances; onOpenStatement: (id: number) => void }) {
   const [asTable, setAsTable] = useState(false);
   const [hover, setHover] = useState<number | null>(null);
   const max = Math.max(...data.balances.map((b) => Math.abs(Number(b.balance))), 0);
@@ -132,10 +132,14 @@ function BalancesCard({ group, data }: { group: Group; data: Balances }) {
                   onMouseLeave={() => setHover(null)}
                 >
                   <button
+                    onClick={() => {
+                      setHover(null);
+                      onOpenStatement(b.user.id);
+                    }}
                     onFocus={() => setHover(b.user.id)}
                     onBlur={() => setHover(null)}
                     className="grid w-full grid-cols-[minmax(0,7rem)_1fr_7rem] items-center gap-3 rounded-lg px-1 py-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
-                    aria-label={`${b.user.name}: ${zero ? "quitado" : neg ? "deve" : "tem a receber"} ${formatMoney(abs(b.balance), data.currency)}.`}
+                    aria-label={`${b.user.name}: ${zero ? "quitado" : neg ? "deve" : "tem a receber"} ${formatMoney(abs(b.balance), data.currency)}. Ver extrato.`}
                   >
                     <span className="flex min-w-0 items-center gap-2 text-sm">
                       <Avatar id={b.user.id} name={b.user.name} size="sm" />
@@ -174,6 +178,7 @@ function BalancesCard({ group, data }: { group: Group; data: Balances }) {
               );
             })}
           </ul>
+          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">Clique em uma pessoa para ver o extrato.</p>
         </>
       )}
       {group.members.length === 0 && <EmptyState title="Sem integrantes" />}

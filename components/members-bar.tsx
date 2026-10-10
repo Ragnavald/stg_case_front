@@ -5,7 +5,7 @@ import { api, ApiError, type Group } from "@/lib/api";
 import { useRefreshGroup } from "@/lib/hooks";
 import { Avatar, Button, ErrorText, Input } from "./ui";
 
-export function MembersBar({ group }: { group: Group }) {
+export function MembersBar({ group, onSelect }: { group: Group; onSelect: (userId: number) => void }) {
   const refresh = useRefreshGroup(group.id);
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState("");
@@ -49,10 +49,10 @@ export function MembersBar({ group }: { group: Group }) {
             key={m.id}
             className="group flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white py-1 pl-1 pr-2 text-sm dark:border-zinc-800 dark:bg-zinc-900"
           >
-            <span className="flex items-center gap-1.5">
+            <button onClick={() => onSelect(m.id)} className="flex items-center gap-1.5 hover:text-emerald-700" title="Ver extrato">
               <Avatar id={m.id} name={m.name} size="sm" />
               {m.name}
-            </span>
+            </button>
             {open && (
               <button
                 onClick={() => remove(m.id, m.name)}

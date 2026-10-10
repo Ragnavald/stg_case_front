@@ -9,10 +9,12 @@ import { Badge, cx, ErrorText, Skeleton } from "./ui";
 import { MembersBar } from "./members-bar";
 import { ExpensesTab } from "./expenses-tab";
 import { SettlementPanel } from "./settlement-panel";
+import { StatementView } from "./statement-view";
 
 const TABS = [
   { id: "expenses", label: "Despesas" },
   { id: "settle", label: "Saldos e quitação" },
+  { id: "statement", label: "Extrato individual" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -21,6 +23,7 @@ export function GroupView({ groupId }: { groupId: number }) {
   const { data: group, error } = useSWR<Group>(`/groups/${groupId}`, fetcher);
   const { data: balances } = useSWR<Balances>(`/groups/${groupId}/balances`, fetcher);
   const [tab, setTab] = useState<TabId>("expenses");
+  const [statementUser, setStatementUser] = useState<number | null>(null);
 
   if (error) {
     return (
@@ -42,6 +45,10 @@ export function GroupView({ groupId }: { groupId: number }) {
   }
 
   const closed = group.status === "CLOSED";
+  const openStatement = (userId: number) => {
+    setStatementUser(userId);
+    setTab("statement");
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -67,7 +74,7 @@ export function GroupView({ groupId }: { groupId: number }) {
             </button>
           )}
         </div>
-        <MembersBar group={group} />
+        <MembersBar group={group} onSelect={openStatement} />
       </div>
 
       <nav className="flex gap-1 overflow-x-auto border-b border-zinc-200 dark:border-zinc-800" role="tablist">
@@ -90,7 +97,10 @@ export function GroupView({ groupId }: { groupId: number }) {
       </nav>
 
       {tab === "expenses" && <ExpensesTab group={group} />}
-      {tab === "settle" && <SettlementPanel group={group} />}
+      {tab === "settle" && <SettlementPanel group={group} onOpenStatement={openStatement} />}
+      {tab === "statement" && (
+        <StatementView group={group} userId={statementUser ?? group.members[0]?.id ?? null} onChangeUser={setStatementUser} />
+      )}
     </div>
   );
 }
