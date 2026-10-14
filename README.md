@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# STG Case — Front-end
 
-## Getting Started
+Interface do rateio de despesas em grupo. A regra de negócio vive na API ([stg_case_back](https://github.com/Ragnavald/stg_case_back)); este projeto só apresenta e coleta dados.
 
-First, run the development server:
+Next.js 16 (App Router, Cache Components) · React 19 · Tailwind CSS 4 · SWR
+
+## Como rodar
+
+Com a API rodando em `http://localhost:3001` (ver README do back):
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local   # NEXT_PUBLIC_API_URL
+npm install
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Telas
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Rota | O que tem |
+| --- | --- |
+| `/` | Lista de grupos e criação de grupo (novas pessoas por nome ou reaproveitando quem já participa de outro grupo) |
+| `/groups/[id]` → **Despesas** | Lançamento com rateio igualitário, por porcentagem, valor fixo ou pesos, com prévia ao vivo de quanto cabe a cada um |
+| `/groups/[id]` → **Saldos e quitação** | Saldo de cada pessoa (gráfico divergente + tabela), comparação sem/com simplificação, plano de liquidação com "marcar como pago", histórico de pagamentos e fechamento do grupo |
+| `/groups/[id]` → **Extrato individual** | Tudo o que moveu o saldo de uma pessoa, com saldo acumulado e o que ela precisa pagar ou receber para quitar |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Decisões
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Dinheiro como string decimal** de ponta a ponta. O front só faz contas para a prévia do rateio, em inteiros (`BigInt`) e com o mesmo método do maior resto da API, então a prévia é exatamente o que será gravado.
+- **Entrada no formato brasileiro:** `1.234,56`, `100,5` e `100.50` são aceitos e normalizados antes do envio.
+- **Mensagens de erro da API traduzidas** em `lib/api.ts`, mantendo a API em inglês.
+- **Cores de saldo** azul (a receber) e vermelho (deve): par seguro para daltonismo, sempre acompanhado de sinal `+`/`−`.
