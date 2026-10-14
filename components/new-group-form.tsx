@@ -107,7 +107,7 @@ export function NewGroupForm() {
                 <button
                   type="button"
                   onClick={() => setMembers((all) => all.filter((x) => x.key !== m.key))}
-                  className="ml-1 text-zinc-400 hover:text-rose-600"
+                  className="-my-1 ml-0.5 px-1 py-1 text-zinc-400 hover:text-rose-600"
                   aria-label={`Remover ${m.name}`}
                 >
                   ×

@@ -67,7 +67,7 @@ export function CardTitle({ children, action }: { children: ReactNode; action?: 
 }
 
 const fieldClass =
-  "h-10 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-400 " +
+  "h-10 w-full rounded-lg border border-zinc-300 bg-white px-3 text-base text-zinc-900 sm:text-sm placeholder:text-zinc-400 " +
   "focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 " +
   "disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100";
 

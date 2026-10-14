@@ -15,7 +15,7 @@ export function SettlementPanel({ group, onOpenStatement }: { group: Group; onOp
   if (!data) return <Skeleton className="h-96" />;
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_420px]">
       <div className="flex flex-col gap-6">
         <Stats data={data} />
         <BalancesCard group={group} data={data} onOpenStatement={onOpenStatement} />
@@ -138,7 +138,7 @@ function BalancesCard({ group, data, onOpenStatement }: { group: Group; data: Ba
                     }}
                     onFocus={() => setHover(b.user.id)}
                     onBlur={() => setHover(null)}
-                    className="grid w-full grid-cols-[minmax(0,7rem)_1fr_7rem] items-center gap-3 rounded-lg px-1 py-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
+                    className="grid w-full grid-cols-[minmax(0,5.5rem)_1fr_auto] items-center gap-2 sm:grid-cols-[minmax(0,7rem)_1fr_7rem] sm:gap-3 rounded-lg px-1 py-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
                     aria-label={`${b.user.name}: ${zero ? "quitado" : neg ? "deve" : "tem a receber"} ${formatMoney(abs(b.balance), data.currency)}. Ver extrato.`}
                   >
                     <span className="flex min-w-0 items-center gap-2 text-sm">
@@ -178,7 +178,7 @@ function BalancesCard({ group, data, onOpenStatement }: { group: Group; data: Ba
               );
             })}
           </ul>
-          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">Clique em uma pessoa para ver o extrato.</p>
+          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">Selecione uma pessoa para ver o extrato.</p>
         </>
       )}
       {group.members.length === 0 && <EmptyState title="Sem integrantes" />}
@@ -252,7 +252,7 @@ function PlanCard({ group, data }: { group: Group; data: Balances }) {
                     <span className="truncate font-medium">{t.from.name}</span>
                   </span>
                   <span className="flex items-center gap-2 pl-1 text-xs text-zinc-500 dark:text-zinc-400">
-                    ↓ paga {formatMoney(t.amount, data.currency)} para
+                    ↓ paga para
                   </span>
                   <span className="flex items-center gap-2">
                     <Avatar id={t.to.id} name={t.to.name} size="sm" />

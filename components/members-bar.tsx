@@ -56,7 +56,7 @@ export function MembersBar({ group, onSelect }: { group: Group; onSelect: (userI
             {open && (
               <button
                 onClick={() => remove(m.id, m.name)}
-                className="text-zinc-300 hover:text-rose-600 dark:text-zinc-600"
+                className="-my-1 -mr-1 px-1 py-1 text-zinc-300 hover:text-rose-600 dark:text-zinc-600"
                 aria-label={`Remover ${m.name}`}
               >
                 ×
@@ -72,14 +72,14 @@ export function MembersBar({ group, onSelect }: { group: Group; onSelect: (userI
           </li>
         )}
         {adding && (
-          <li>
+          <li className="w-full sm:w-auto">
             <form onSubmit={add} className="flex items-center gap-2">
               <Input
                 autoFocus
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Nome"
-                className="h-8 w-40"
+                className="h-8 min-w-0 flex-1 sm:w-40 sm:flex-none"
                 maxLength={80}
               />
               <Button size="sm" type="submit" loading={busy}>

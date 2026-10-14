@@ -20,7 +20,7 @@ export function ExpensesTab({ group }: { group: Group }) {
   const open = group.status === "OPEN";
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_400px]">
       <Card className="order-2 lg:order-1">
         <CardTitle>Despesas</CardTitle>
         {isLoading && <Skeleton className="h-40" />}

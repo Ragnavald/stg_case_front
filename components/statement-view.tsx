@@ -96,7 +96,40 @@ export function StatementView({
             {data.entries.length === 0 ? (
               <EmptyState title="Nenhuma movimentação" />
             ) : (
-              <div className="-mx-5 overflow-x-auto px-5">
+              <>
+              <ul className="flex flex-col divide-y divide-zinc-100 text-sm sm:hidden dark:divide-zinc-800">
+                {data.entries.map((e) => (
+                  <li key={`${e.type}-${e.refId}`} className="flex items-start justify-between gap-3 py-2.5">
+                    <div className="min-w-0">
+                      <p className="truncate">
+                        {e.type === "EXPENSE"
+                          ? e.description
+                          : e.type === "SETTLEMENT_SENT"
+                            ? `Pagamento para ${e.counterpart?.name}`
+                            : `Pagamento de ${e.counterpart?.name}`}
+                      </p>
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                        {formatDate(e.date)}
+                        {e.type === "EXPENSE" && <> · pago por {e.counterpart?.name ?? data.user.name}</>}
+                      </p>
+                      {e.type === "EXPENSE" && (
+                        <p className="text-xs tabular-nums text-zinc-500 dark:text-zinc-400">
+                          {!isZero(e.paid) && <>Pagou {formatMoney(e.paid, data.currency)} · </>}
+                          Sua parte {isZero(e.share) ? "—" : formatMoney(e.share, data.currency)}
+                        </p>
+                      )}
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <Money value={e.effect} currency={data.currency} signed className="font-medium" />
+                      <p className="text-xs tabular-nums text-zinc-500 dark:text-zinc-400">
+                        saldo {isNegative(e.runningBalance) ? "− " : ""}
+                        {formatMoney(abs(e.runningBalance), data.currency)}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <div className="-mx-5 hidden overflow-x-auto px-5 sm:block">
                 <table className="w-full min-w-[640px] text-sm">
                   <thead className="text-left text-xs text-zinc-500 dark:text-zinc-400">
                     <tr className="border-b border-zinc-200 dark:border-zinc-800">
@@ -140,6 +173,7 @@ export function StatementView({
                   </tbody>
                 </table>
               </div>
+              </>
             )}
           </Card>
         </>

@@ -12,9 +12,9 @@ import { SettlementPanel } from "./settlement-panel";
 import { StatementView } from "./statement-view";
 
 const TABS = [
-  { id: "expenses", label: "Despesas" },
-  { id: "settle", label: "Saldos e quitação" },
-  { id: "statement", label: "Extrato individual" },
+  { id: "expenses", label: "Despesas", short: "Despesas" },
+  { id: "settle", label: "Saldos e quitação", short: "Saldos" },
+  { id: "statement", label: "Extrato individual", short: "Extrato" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -85,13 +85,14 @@ export function GroupView({ groupId }: { groupId: number }) {
             aria-selected={tab === t.id}
             onClick={() => setTab(t.id)}
             className={cx(
-              "-mb-px whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-medium transition-colors",
+              "-mb-px flex-1 whitespace-nowrap border-b-2 px-3 py-2.5 text-sm font-medium transition-colors sm:flex-none sm:px-4",
               tab === t.id
                 ? "border-emerald-600 text-emerald-700 dark:text-emerald-400"
                 : "border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100",
             )}
           >
-            {t.label}
+            <span className="sm:hidden">{t.short}</span>
+            <span className="hidden sm:inline">{t.label}</span>
           </button>
         ))}
       </nav>

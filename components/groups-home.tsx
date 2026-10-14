@@ -11,13 +11,13 @@ export function GroupsHome() {
   const { data: groups, error, isLoading } = useSWR<GroupSummary[]>("/groups", fetcher);
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_380px]">
       <div className="flex flex-col gap-3">
         <h2 className="text-sm font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Seus grupos</h2>
         {error && <ErrorText>{error.message}</ErrorText>}
         {isLoading && [0, 1, 2].map((i) => <Skeleton key={i} className="h-20" />)}
         {groups?.length === 0 && (
-          <EmptyState title="Nenhum grupo ainda">Crie um grupo ao lado para começar a dividir despesas.</EmptyState>
+          <EmptyState title="Nenhum grupo ainda">Crie um grupo para começar a dividir despesas.</EmptyState>
         )}
         {groups?.map((g) => (
           <Link
@@ -26,8 +26,8 @@ export function GroupsHome() {
             className="group flex items-center justify-between gap-4 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition-colors hover:border-emerald-600 dark:border-zinc-800 dark:bg-zinc-900"
           >
             <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="truncate font-semibold text-zinc-900 group-hover:text-emerald-700 dark:text-zinc-100">{g.name}</p>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                <p className="break-words font-semibold sm:truncate text-zinc-900 group-hover:text-emerald-700 dark:text-zinc-100">{g.name}</p>
                 {g.status === "CLOSED" && <Badge>Fechado</Badge>}
               </div>
               <p className="text-sm text-zinc-500 dark:text-zinc-400">

@@ -166,7 +166,7 @@ export function ExpenseForm({ group }: { group: Group }) {
 
         <div className="flex flex-col gap-1.5">
           <span className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Dividir</span>
-          <div className="grid grid-cols-4 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800" role="radiogroup">
+          <div className="grid grid-cols-2 gap-1 rounded-lg sm:grid-cols-4 bg-zinc-100 p-1 dark:bg-zinc-800" role="radiogroup">
             {SPLIT_TYPES.map((t) => (
               <button
                 key={t.id}
@@ -192,19 +192,27 @@ export function ExpenseForm({ group }: { group: Group }) {
           {group.members.map((m) => {
             const on = selected.has(m.id);
             const share = preview.shares.get(m.id);
+            const shareText = on && share !== undefined && splitType !== "EXACT" ? money(share) : "";
+            const withInput = on && splitType !== "EQUAL";
             return (
               <li key={m.id} className={cx("flex items-center gap-3 px-3 py-2", !on && "opacity-50")}>
                 <input
                   type="checkbox"
                   checked={on}
                   onChange={() => toggle(m.id)}
-                  className="size-4 accent-emerald-600"
+                  className="size-4 shrink-0 accent-emerald-600"
                   aria-label={`Incluir ${m.name}`}
                 />
                 <Avatar id={m.id} name={m.name} size="sm" />
-                <span className="flex-1 truncate text-sm">{m.name}</span>
-                {on && splitType !== "EQUAL" && (
-                  <div className="relative w-24">
+                {/* With a value input on the row, the computed share moves under the name so the name keeps its room */}
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <span className="truncate text-sm">{m.name}</span>
+                  {withInput && shareText && (
+                    <span className="text-xs tabular-nums text-zinc-500 dark:text-zinc-400">{shareText}</span>
+                  )}
+                </span>
+                {withInput && (
+                  <div className="relative w-24 shrink-0">
                     <Input
                       value={values[m.id] ?? ""}
                       onChange={(e) => setValues((v) => ({ ...v, [m.id]: e.target.value }))}
@@ -218,9 +226,9 @@ export function ExpenseForm({ group }: { group: Group }) {
                     </span>
                   </div>
                 )}
-                <span className="w-24 text-right text-sm tabular-nums text-zinc-600 dark:text-zinc-300">
-                  {on && share !== undefined && splitType !== "EXACT" ? money(share) : ""}
-                </span>
+                {!withInput && (
+                  <span className="shrink-0 text-right text-sm tabular-nums text-zinc-600 dark:text-zinc-300">{shareText}</span>
+                )}
               </li>
             );
           })}
